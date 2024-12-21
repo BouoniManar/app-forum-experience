@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forum_experience/CategoryManagementPage.dart';
+import 'package:forum_experience/UserManagementPage.dart';
 
 class AdminHomePage extends StatelessWidget {
   @override
@@ -29,14 +30,19 @@ class AdminHomePage extends StatelessWidget {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
-                  _buildDashboardCard(
-                    title: "Utilisateurs",
-                    icon: Icons.person,
-                    color: Colors.teal,
-                    onTap: () {
-                      // Navigation vers la gestion des utilisateurs
-                    },
-                  ),
+                  
+               _buildDashboardCard(
+                  title: "Utilisateurs",
+                  icon: Icons.person,
+                  color: Colors.teal,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => UserManagementPage()),
+                    );
+                  },
+                ),
+
                   _buildDashboardCard(
                     title: "Sujets",
                     icon: Icons.forum,

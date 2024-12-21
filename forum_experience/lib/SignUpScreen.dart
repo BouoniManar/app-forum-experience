@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'SignInScreen.dart';
@@ -13,23 +14,37 @@ class SignUpScreen extends StatelessWidget {
   void _signUp(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
+        // Créer un utilisateur avec Firebase Authentication
         final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Account created successfully for ${credential.user?.email}')),
-        );
 
-        
-        Future.delayed(Duration(seconds: 1), () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => SignInScreen()),
+        // Ajouter l'utilisateur dans Realtime Database
+        final user = credential.user;
+        if (user != null) {
+          final databaseRef = FirebaseDatabase.instance.ref().child('users').child(user.uid);
+
+
+          await databaseRef.set({
+            'name': _nameController.text.trim(),
+            'email': _emailController.text.trim(),
+            'userId': user.uid,
+            'createdAt': DateTime.now().toIso8601String(),
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Account created successfully for ${user.email}')),
           );
-        });
 
+          // Rediriger vers l'écran de connexion après un délai
+          Future.delayed(Duration(seconds: 1), () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => SignInScreen()),
+            );
+          });
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create account: ${e.toString()}')),
@@ -164,7 +179,7 @@ class SignUpScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
-                     SizedBox(height: 20),
+                    SizedBox(height: 20),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
