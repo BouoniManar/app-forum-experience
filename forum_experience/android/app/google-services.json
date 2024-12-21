@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "958646803847",
+    "project_id": "glsib-a3f40",
+    "storage_bucket": "glsib-a3f40.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958646803847:android:5dfa7e5960d5bcb1534722",
+        "android_client_info": {
+          "package_name": "com.e"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTPHBwQ3UAIBDlqDmLoV8CRGeJsZkh7Eg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958646803847:android:25069fa39abac49e534722",
+        "android_client_info": {
+          "package_name": "com.example.forum_experience"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTPHBwQ3UAIBDlqDmLoV8CRGeJsZkh7Eg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
