@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.system,
-      home: SplashScreen(), // Affiche le SplashScreen au démarrage
+      home: SplashScreen(), 
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forum_experience/CategoryManagementPage.dart';
 import 'package:forum_experience/UserManagementPage.dart';
+import 'package:forum_experience/SignInScreen.dart';
+import 'package:forum_experience/SubjectManagementPage.dart'; // Créez cette page
 
 class AdminHomePage extends StatelessWidget {
   @override
@@ -30,25 +32,37 @@ class AdminHomePage extends StatelessWidget {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
-                  
-               _buildDashboardCard(
-                  title: "Utilisateurs",
-                  icon: Icons.person,
-                  color: Colors.teal,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => UserManagementPage()),
-                    );
-                  },
-                ),
-
                   _buildDashboardCard(
-                    title: "Sujets",
+                    title: "Utilisateurs",
+                    icon: Icons.person,
+                    color: Colors.teal,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UserManagementPage()),
+                      );
+                    },
+                  ),
+                  _buildDashboardCard(
+                    title: "Posts",
                     icon: Icons.forum,
                     color: Colors.blue,
                     onTap: () {
-                      // Navigation vers la modération des sujets
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SubjectManagementPage()),
+                      );
+                    },
+                  ),
+                  _buildDashboardCard(
+                    title: "LOGOUT",
+                    icon: Icons.logout,
+                    color: Colors.red,
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignInScreen()),
+                      );
                     },
                   ),
                   _buildDashboardCard(
@@ -56,21 +70,12 @@ class AdminHomePage extends StatelessWidget {
                     icon: Icons.category,
                     color: Colors.orange,
                     onTap: () {
-                                          // Navigation vers la gestion des catégories
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CategoryManagementPage()),
+                      );
                     },
                   ),
-                _buildDashboardCard(
-                  title: "Catégories",
-                  icon: Icons.category,
-                  color: Colors.orange,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CategoryManagementPage()),
-                    );
-                  },
-                ),
-
                 ],
               ),
             ),

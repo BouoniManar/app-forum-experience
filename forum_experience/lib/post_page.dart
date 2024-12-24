@@ -8,6 +8,7 @@ class PostPage extends StatelessWidget {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
+  // Ajout d'un post
   void _addPost(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
@@ -24,7 +25,7 @@ class PostPage extends StatelessWidget {
           );
 
           // Référence à la Realtime Database
-          DatabaseReference postsRef = FirebaseDatabase.instance.ref('posts'); // Corrected class name
+          DatabaseReference postsRef = FirebaseDatabase.instance.ref('posts');
 
           // Ajouter le post dans la Realtime Database
           await postsRef.push().set(newPost.toJson());
@@ -51,6 +52,66 @@ class PostPage extends StatelessWidget {
       }
     }
   }
+
+  // Supprimer un post
+  void _deletePost(String postId) async {
+    try {
+      DatabaseReference postRef = FirebaseDatabase.instance.ref('posts/$postId');
+      await postRef.remove();
+      print("Post deleted successfully!");
+    } catch (e) {
+      print("Failed to delete post: $e");
+    }
+  }
+
+ // Modifier un post
+void _editPost(BuildContext context, String postId, String currentTitle, String currentContent) {
+  _titleController.text = currentTitle;
+  _contentController.text = currentContent;
+
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Edit Post'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+            ),
+            TextFormField(
+              controller: _contentController,
+              decoration: InputDecoration(labelText: 'Content'),
+              maxLines: 5,
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              if (_titleController.text.isNotEmpty && _contentController.text.isNotEmpty) {
+                // Mettre à jour le post dans la base de données
+                DatabaseReference postRef = FirebaseDatabase.instance.ref('posts/$postId');
+                await postRef.update({
+                  'title': _titleController.text,
+                  'message': _contentController.text,
+                });
+
+                // Fermer la boîte de dialogue et afficher un message de succès
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Post updated successfully')));
+              }
+            },
+            child: Text('Update'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +174,60 @@ class PostPage extends StatelessWidget {
                   'Add Post',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
+              ),
+              SizedBox(height: 30),
+              // Affichage des posts
+              FutureBuilder<DataSnapshot>(
+                future: FirebaseDatabase.instance.ref('posts').get(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.value == null) {
+                    return Center(child: Text('No posts available.'));
+                  }
+
+                  Map<dynamic, dynamic> posts = snapshot.data!.value as Map<dynamic, dynamic>;
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      var post = posts.values.toList()[index];
+                      var postId = posts.keys.toList()[index];
+
+                      return Card(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: ListTile(
+                          title: Text(post['username']),
+                          subtitle: Text(post['message']),
+                          trailing: PopupMenuButton<String>(
+  onSelected: (value) {
+    if (value == 'edit') {
+      _editPost(context, postId, post['title'], post['message']);
+    } else if (value == 'delete') {
+      _deletePost(postId);
+    }
+  },
+  itemBuilder: (context) {
+    return [
+      PopupMenuItem<String>(
+        value: 'edit',
+        child: Text('Edit'),
+      ),
+      PopupMenuItem<String>(
+        value: 'delete',
+        child: Text('Delete'),
+      ),
+    ];
+  },
+)
+
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

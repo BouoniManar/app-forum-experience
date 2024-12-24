@@ -11,6 +11,8 @@ class SignUpScreen extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  String _selectedRole = 'user'; 
+
   void _signUp(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
@@ -25,11 +27,11 @@ class SignUpScreen extends StatelessWidget {
         if (user != null) {
           final databaseRef = FirebaseDatabase.instance.ref().child('users').child(user.uid);
 
-
           await databaseRef.set({
             'name': _nameController.text.trim(),
             'email': _emailController.text.trim(),
             'userId': user.uid,
+            'role': _selectedRole, // Enregistrer le rôle
             'createdAt': DateTime.now().toIso8601String(),
           });
 
@@ -163,6 +165,31 @@ class SignUpScreen extends StatelessWidget {
                         }
                         return null;
                       },
+                    ),
+                    SizedBox(height: 20),
+                    // Dropdown pour sélectionner le rôle
+                    DropdownButtonFormField<String>(
+                      value: _selectedRole,
+                      items: [
+                        DropdownMenuItem(
+                          value: 'user',
+                          child: Text('User'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'admin',
+                          child: Text('Admin'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        _selectedRole = value ?? 'user';
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Role',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        prefixIcon: Icon(Icons.group),
+                      ),
                     ),
                     SizedBox(height: 40),
                     ElevatedButton(
